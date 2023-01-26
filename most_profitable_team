@@ -1,0 +1,75 @@
+/*
+You are given the employee hierarchy of an High Frequency Trading company. Every employee except for a CEO has exactly one direct boss. All employees are numbered from 1
+ to N
+.
+
+You are also given the profit/loss that each employee directly makes for the company.
+A team headed by employee X
+ consists of himself/herself and all employees who directly or indirectly report to employee X
+. Thus there are N
+ teams.
+(Even if an employee doesn't manages any other employee, he still heads team consisting of just himself/herself.)
+
+Report the maximum profit made by any team.
+
+1≤N≤2×105
+
+−200≤
+ Profit/Loss made by any employee ≤200
+
+INPUT
+The first line has an integers N
+ - the number of employees of the company.
+
+The next line contains N−1
+ integers, which contain for each employee 2
+, 3
+, ... , N
+ their direct boss in the company.
+
+The next line contains N
+ integers which denotes profit/loss each person directly generates for the company
+
+Employee number 1
+ is the CEO who is managed by none.
+
+ input : 
+ 5
+1 2 3 4
+10 10 -100 15 15
+
+output : 
+30
+*/
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int  dfs(vector<vector<int> >& graph, int st, vector<int>& vis, vector<int>& valueToCompany, int& ans){
+    vis[st] = true;
+    int TeamValue = 0;
+    for(auto child : graph[st]){
+        if(vis[child] == false){
+            TeamValue +=  dfs(graph, child, vis, valueToCompany, ans);
+        }
+    }
+    TeamValue += valueToCompany[st];
+    ans = max(ans, TeamValue);
+    return TeamValue;
+}
+
+int main(){
+    int n;cin>>n;
+    vector<vector<int> > graph(n + 1);
+    for(int i = 2; i <= n; i++){
+        int par;cin>>par;
+        graph[par].push_back(i);
+    }
+    vector<int> valueToCompany(n + 1);
+    for(int i = 1; i <= n; i++)cin>>valueToCompany[i];
+    vector<int> vis(n + 1, 0);
+    int ans = -1e9;
+    int tmp = dfs(graph, 1, vis, valueToCompany, ans);
+    cout<<ans<<endl;
+    return 0;
+}
